@@ -1,0 +1,5 @@
+DEPENDENCIES
+  s3_file (~> 2.7.0)
+
+GRAPH
+  s3_file (2.7.0)

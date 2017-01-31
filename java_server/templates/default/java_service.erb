@@ -1,0 +1,13 @@
+description "Hello world"
+author      "Example"
+
+start on filesystem
+
+respawn
+
+respawn limit 5 5
+
+script
+  cd <%= @work_dir %>
+  /usr/bin/java -jar <%= ::File.join(@work_dir, @filename) %>
+end script
