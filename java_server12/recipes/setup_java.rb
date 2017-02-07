@@ -4,5 +4,3 @@ apt_update 'all platforms' do
 end
 
 apt_package 'default-jre'
-
-apt_package 'unzip'

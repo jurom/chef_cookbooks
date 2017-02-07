@@ -1,5 +1,10 @@
 Chef::Log.info('Starting deploy recipe')
 
+work_dir = '/home/ubuntu'
+jar_filename = node.key?(:jar_filename) ? node[:jar_filename] : 'railsbank-server.jar'
+owner = 'ubuntu'
+group = 'ubuntu'
+
 search("aws_opsworks_app").each do |app|
   app_name = app['shortname']
 
@@ -15,31 +20,11 @@ search("aws_opsworks_app").each do |app|
     action :stop
   end
 
-  work_dir = '/home/ubuntu'
-  zip_name = 'server.zip'
-  owner = 'ubuntu'
-  group = 'ubuntu'
-
-  s3_bucket, s3_key, base_url = parse_uri(app['app_source']['url'])
-
-  Chef::Log.info("S3 Params: #{s3_bucket}, #{s3_key}, #{base_url}")
-
-  s3_file "#{work_dir}/#{zip_name}" do
-    bucket s3_bucket
-    remote_path s3_key
-    owner owner
-    group group
-    mode "0755"
-    s3_url base_url
-    action :create
+  s3_download "#{work_dir}/#{jar_filename}" do
+    url app['app_source']['url']
   end
 
-  Chef::Log.info("Server zip file downloaded")
-
-  execute "unzip server" do
-    cwd work_dir
-    command "unzip -o #{zip_name}"
-  end
+  Chef::Log.info("Server jar file downloaded")
 
   env_vars = app['environment'].map{|name, value| "#{name}=#{value}"}.join("\n")
 
@@ -56,12 +41,14 @@ search("aws_opsworks_app").each do |app|
     owner owner
     group group
     mode "0755"
-    variables :work_dir => work_dir, :filename => node[:jar_filename], :config_file => config_path
+    variables :work_dir => work_dir, :filename => jar_filename, :config_file => config_path
   end
 
+  execute "systemctl daemon-reload"
+
   service "java_server" do
-    supports :restart => true, :start => true, :stop => true, :reload => true
-    action [:enable, :reload, :start]
+    supports :restart => true, :start => true, :stop => true
+    action [:enable, :start]
     subscribes :restart, "template[java_server]", :immediately
   end
 end

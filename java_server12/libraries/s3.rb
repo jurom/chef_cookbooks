@@ -1,7 +1,7 @@
 module JavaServer
   module S3
 
-    def parse_uri(uri)
+    def self.parse_uri(uri)
       #                base_uri                |         remote_path
       #----------------------------------------+------------------------------
       # scheme, userinfo, host, port, registry | path, opaque, query, fragment
@@ -28,8 +28,4 @@ module JavaServer
       [bucket, remote_path.to_s.to_s.sub(%r{^/}, ""), base_uri.to_s.chomp("/")]
     end
   end
-end
-
-class Chef::Recipe
-  include JavaServer::S3
 end
