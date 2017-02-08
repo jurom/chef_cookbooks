@@ -1,0 +1,9 @@
+[Unit]
+Description=Datomic
+
+[Service]
+WorkingDirectory=<%= @work_dir %>
+ExecStart=<%= ::File.join(@transactor_dir, '/bin/transactor') %> <%= @transactor_config %>
+
+[Install]
+WantedBy=multi-user.target

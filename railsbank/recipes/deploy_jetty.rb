@@ -1,9 +1,9 @@
-Chef::Log.info('Starting deploy recipe')
+Chef::Log.info('Starting deploy jetty recipe')
 
-work_dir = '/home/ubuntu'
 jar_filename = node.key?(:jar_filename) ? node[:jar_filename] : 'railsbank-server.jar'
 owner = 'ubuntu'
 group = 'ubuntu'
+work_dir = "/home/#{owner}"
 
 search("aws_opsworks_app").each do |app|
   app_name = app['shortname']
