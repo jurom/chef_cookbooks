@@ -1,3 +1,3 @@
-include_recipe "setup_java"
+include_recipe "railsbank::setup_java"
 
 package "unzip"

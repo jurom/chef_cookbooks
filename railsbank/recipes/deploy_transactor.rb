@@ -2,8 +2,9 @@ Chef::Log.info('Starting deploy transactor recipe')
 
 owner = 'ubuntu'
 group = 'ubuntu'
-work_dir = "/home/#{owner}"
+work_dir = ::File.join("/home", owner)
 zip_file = 'datomic.zip'
+zip_file_path = ::File.join(work_dir, zip_file)
 
 search("aws_opsworks_app").each do |app|
   app_name = app['shortname']
@@ -20,14 +21,14 @@ search("aws_opsworks_app").each do |app|
     action :stop
   end
 
-  s3_download "#{work_dir}/#{zip_file}" do
+  s3_download zip_file_path do
     url app['app_source']['url']
   end
 
   Chef::Log.info("Datomic zip file downloaded")
 
-  execute "unzip -o #{zip_file}"
-  execute "rm #{zip_file}"
+  execute "unzip -o #{zip_file_path} -d #{work_dir}"
+  execute "rm #{zip_file_path}"
 
   # Assume that there's a directory called datomic inside
   transactor_dir = ::File.join(work_dir, 'datomic')
@@ -43,9 +44,9 @@ search("aws_opsworks_app").each do |app|
     group group
     mode "0755"
     variables config: {
-      :host => search("aws_opsworks_instance").first[:private_ip],
-      :table => node[:datomic][:table],
-      :license_key => node[:datomic][:license_key]
+      host: search("aws_opsworks_instance", "self:true").first[:private_ip],
+      table: node[:datomic][:table],
+      license_key: node[:datomic][:license_key]
     }
   end
 
@@ -55,14 +56,14 @@ search("aws_opsworks_app").each do |app|
     owner owner
     group group
     mode "0755"
-    variables :work_dir => work_dir, transactor_dir => transactor_dir, :transactor_config => config_path
+    variables :work_dir => work_dir, :transactor_dir => transactor_dir, :transactor_config => config_path
   end
 
   execute "systemctl daemon-reload"
 
-  service "java_server" do
+  service "transactor" do
     supports :restart => true, :start => true, :stop => true
     action [:enable, :start]
-    subscribes :restart, "template[java_server]", :immediately
+    subscribes :restart, "template[transactor]", :immediately
   end
 end

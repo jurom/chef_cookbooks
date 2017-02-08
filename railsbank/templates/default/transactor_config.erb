@@ -1,7 +1,7 @@
 ################################################################
 
 protocol=ddb
-host=<%= @config.host %>
+host=<%= @config[:host] %>
 port=4334
 
 
@@ -9,13 +9,13 @@ port=4334
 ################################################################
 # See http://docs.datomic.com/storage.html
 
-license-key=<%= @config.license_key %>
+license-key=<%= @config[:license_key] %>
 
 ################################################################
 # See http://docs.datomic.com/storage.html
 # DynamoDB storage settings
 
-aws-dynamodb-table=<%= @config.table %>
+aws-dynamodb-table=<%= @config[:table] %>
 
 # See http://docs.amazonwebservices.com/general/latest/gr/rande.html#ddb_region
 aws-dynamodb-region=eu-central-1

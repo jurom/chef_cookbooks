@@ -1,5 +1,5 @@
 #
-# Cookbook:: java_server12
+# Cookbook:: railsbank
 # Recipe:: default
 #
 # Copyright:: 2017, The Authors, All Rights Reserved.

@@ -19,7 +19,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[java_server12::default]
+      - recipe[railsbank::default]
     verifier:
       inspec_tests:
         - test/smoke/default
