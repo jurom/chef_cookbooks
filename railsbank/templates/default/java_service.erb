@@ -3,8 +3,8 @@ Description=Railsbank server
 
 [Service]
 WorkingDirectory=<%= @work_dir %>
-EnvironmentFile=<%= @config_file %>
-ExecStart=/usr/bin/java -Dlogback.configurationFile=<%= @work_dir %>prod-log-config.xml -jar <%= ::File.join(@work_dir, @filename) %>
+EnvironmentFile=<%= @config_path %>
+ExecStart=/usr/bin/java -Dlogback.configurationFile=<%= ::File.join(@work_dir, 'prod-log-config.xml') %> -jar <%= @jar_path %>
 
 [Install]
 WantedBy=multi-user.target
